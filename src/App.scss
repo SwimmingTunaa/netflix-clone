@@ -1,32 +1,89 @@
 @use "./Helpers.scss";
 @import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
+@import "~slick-carousel/slick/slick.css";
+@import "~slick-carousel/slick/slick-theme.css";
 
+$rowHeight: "10%";
 $roboto: "Roboto", serif;
+$dark-grey: rgb(15, 15, 15);
+
+*,
+::after,
+::before {
+  box-sizing: inherit;
+}
 
 body {
   font-family: $roboto;
-  background-color: black;
+  background-color: $dark-grey;
   color: white;
 }
 
 .row {
   width: 100%;
-  height: 40%;
+  height: 5%;
+  margin-top: 2rem;
 }
 
 .movie-posters {
-  overflow: hidden;
-  flex-wrap: nowrap;
+  position: relative;
+  width: 100%;
 }
 
 .movie {
-  width: 10%;
-  height: 50%;
-  margin-left: 1rem;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
   border-radius: 3%;
-  transition: width 0.2s;
+  transition: 0.2s 0.5s;
+  padding-top: 8%;
+  padding-bottom: 8%;
+  img {
+    width: auto;
+    height: 200px;
+    border-radius: 0.6rem;
+    cursor: pointer;
+  }
+}
+.movie:hover {
+  z-index: 1;
+  transform: scale(1.08);
+  transition: 0;
 }
 
-.movie:hover {
-  width: 100%;
+.scroll-button {
+  z-index: 1;
+  position: absolute;
+  height: 250px;
+  border: none;
+  width: 3%;
+  color: white;
+  font-size: 2.5rem;
+  background-color: transparent;
+  transform: translateY(-100%);
+  cursor: pointer;
+
+  &.left {
+    background-image: linear-gradient(to right, $dark-grey, transparent 100%);
+  }
+
+  &.right {
+    background-image: linear-gradient(to left, $dark-grey, transparent 100%);
+    right: 0;
+  }
+
+  i {
+    transition: 0.2s ease-in;
+  }
+  i:hover {
+    transform: scale(1.2);
+  }
+}
+
+.slick-prev {
+  left: 0px;
+  height: 100%;
+  z-index: 1;
+  width: 50px;
+  background-color: transparent;
+  background-image: linear-gradient(to right, $dark-grey, transparent 100%);
 }
