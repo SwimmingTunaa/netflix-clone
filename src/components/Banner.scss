@@ -1,0 +1,40 @@
+$dark-grey: rgb(22, 22, 22);
+
+.banner {
+  height: 120vh;
+  background-repeat: no-repeat;
+  background-size: cover;
+  div {
+    height: 100%;
+  }
+}
+
+.fade {
+  background-image: linear-gradient(to top, $dark-grey, transparent 100%);
+}
+.video-banner {
+  height: 100%;
+}
+
+.banner-content {
+  width: 30%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 4rem;
+  background-image: linear-gradient(to right, $dark-grey, transparent 100%);
+  span {
+    height: 20%;
+  }
+  p {
+    line-height: 2.2rem;
+  }
+}
+
+h1 {
+  font-size: 5rem;
+  margin: 0;
+}
+p {
+  font-size: 1.5rem;
+}

@@ -3,32 +3,48 @@ import axios from 'axios';
 import Movie from './Movie'
 import Slider from 'react-slick';
 import rowSettings from '../rowSettings';
+import YouTube from 'react-youtube'; 
 
-function Row({ title, fetchURL })
+
+function Row({ title, fetchURL, mediaType, selectedRow, setSelectedRow })
 {
     const [movies, setMovies] = useState([]);
+    const [currentMovie, setCurrentMovie] = useState({});
     const [error, setError] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
+
     const baseURL = 'https://api.themoviedb.org/3'
     const sliderRef = useRef();
-    
+    const opts = {
+     
+        playerVars: {
+        // https://developers.google.com/youtube/player_parameters
+            autoplay: 1,
+            mute: 1
+      },
+    }
+
     useEffect(() => {
         const fetchData = async () =>
         {
+            setIsLoading(true)
             setError(false);
             try {
-                const res = await axios(`${baseURL}${fetchURL}`);
-                setMovies(res.data.results);
-                
+                const response = await axios(`${baseURL}${fetchURL}`)
+                setMovies(response.data.results)
             } catch (error) {
                 setError(true)
                 setTimeout(() => setError(false), 3000)
             }
-
         }
         fetchData();
-    }, [fetchURL])
+         setIsLoading(false)                
 
-    console.log(movies)
+        return () => 
+        {
+            useRef.current = null;    
+        }
+    }, [fetchURL])
 
     const renderError = () =>
     {
@@ -40,43 +56,73 @@ function Row({ title, fetchURL })
         }
     }
 
-    const scrollButton = (direction, clickEvent) =>
+    const handleShowMoreDetails = () =>
     {
-        //const div = document.getElementById(`${movies[0].id}`);
-        //console.log(div);
-        return <button className={`scroll-button ${direction}`} onClick={clickEvent}>
-                    <i className={`fas fa-chevron-${direction}`} ></i>
+        setSelectedRow('')
+        setSelectedRow(title)
+    }
+
+    const ShowMoreDetails = () =>
+    {
+        return (
+            <span
+                className={`d-flex details-container ${selectedRow === title && 'open'}`} 
+                style={{ backgroundImage: `url("https://image.tmdb.org/t/p/original${currentMovie.backdrop_path}")` }}
+            >
+                <span className='details-content'>
+                    <h1>{mediaType === 'movie' ? currentMovie.title : currentMovie.name}</h1>
+                    <p>
+                        {currentMovie.overview}
+                    </p>
+                </span>
+                {currentMovie.trailerKey && <YouTube
+                   className='tralier'
+                    videoId={currentMovie.trailerKey}
+                    opts={opts}
+                >
+                </YouTube>}
+
+                {/* close button*/}
+                <button onClick={() => setSelectedRow('')}>
+                    <i className="far fa-times-circle"></i>
                 </button>
+            </span>
+        )    
+    }
+    const ShowLoading = () =>
+    {
+        return isLoading ? <div>loading</div> : null
     }
 
-    function prev()
+    const RenderRow = () =>
     {
-        sliderRef?.current?.slickPrev()
-    }
+        <ShowLoading /> 
+        return <React.Fragment>
+              <h2>{title}</h2>
+            {/*containers --> movies*/}
 
-    function next()
-    {
-        sliderRef?.current?.slickNext()
+            <Slider {...rowSettings} className='movie-posters' ref={sliderRef}>
+                    {movies.map(movie =>
+                    {
+                        return (
+                            <Movie
+                                handleShowMoreDetails={handleShowMoreDetails}
+                                mediaType={mediaType}
+                                setCurrentMovie={setCurrentMovie}
+                                movie={movie}
+                                key={movie.id}
+                            /> 
+                        )
+                    })}
+            </Slider>
+        </React.Fragment>
     }
 
     return (
         <div className='row'>
-            {renderError()}
-     
-            {/*title*/}
-            <h2>{title}</h2>
-            {/*containers --> movies*/}
-            <Slider {...rowSettings} className='movie-posters' ref={sliderRef}>
-                
-                    {/*button scroll right*/}
-                     {movies.map(movie =>
-                    {
-                        return <Movie posterPath={movie.poster_path} alt={Movie.name} id={ movie.id}/>
-                    })}
-            </Slider>
-            {scrollButton('left',prev)}
-            {scrollButton('right',next)}
-            
+            <RenderRow/>
+            {renderError()}                        
+            {selectedRow === title && <ShowMoreDetails/>}
         </div>
     )
 }
