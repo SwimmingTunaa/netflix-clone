@@ -12,7 +12,7 @@ const Movie = ({setCurrentMovie, movie, mediaType, handleShowMoreDetails}) =>
         {
             try
             {
-                 const response = await axios(`http://api.themoviedb.org/3/${mediaType}/${movie.id}}/videos?api_key=540e2925e10e3ae187957ed859b39322`)
+                 const response = await axios(`https://api.themoviedb.org/3/${mediaType}/${movie.id}}/videos?api_key=540e2925e10e3ae187957ed859b39322`)
                 if (response.data.results.length <= 0)
                     setTralierKey('');
                 else
