@@ -8,15 +8,8 @@ function NavBar()
 
     useEffect(() =>
     {
-        window.addEventListener("scroll", () =>
-        {
-            if (window.scrollY > 100)
-            {
-                setShowNav(true)
-            }
-            else
-                setShowNav(false);
-        })
+        window.addEventListener("scroll", () => setShowNav(window.scrollY > 100))
+            
         return () =>
         {
             window.removeEventListener("scroll")

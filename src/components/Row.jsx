@@ -1,60 +1,26 @@
-import React, {useState, useEffect, useRef} from 'react'
-import axios from 'axios';
+import React, {useState, useRef} from 'react'
 import Movie from './Movie'
 import Slider from 'react-slick';
 import rowSettings from '../rowSettings';
 import YouTube from 'react-youtube'; 
-
+import { useFetchMovies } from '../custom_hooks/fetchMovies.hook';
 
 function Row({ title, fetchURL, mediaType, selectedRow, setSelectedRow })
 {
-    const [movies, setMovies] = useState([]);
     const [currentMovie, setCurrentMovie] = useState({});
-    const [error, setError] = useState(false)
-    const [isLoading, setIsLoading] = useState(false)
+   
+    const [movies, error, isLoading] = useFetchMovies(fetchURL, mediaType);
 
-    const baseURL = 'https://api.themoviedb.org/3'
     const sliderRef = useRef();
     const opts = {
-     
         playerVars: {
-        // https://developers.google.com/youtube/player_parameters
             autoplay: 1,
             mute: 1
       },
     }
 
-    useEffect(() => {
-        const fetchData = async () =>
-        {
-            setIsLoading(true)
-            setError(false);
-            try {
-                const response = await axios(`${baseURL}${fetchURL}`)
-                setMovies(response.data.results)
-            } catch (error) {
-                setError(true)
-                setTimeout(() => setError(false), 3000)
-            }
-        }
-        fetchData();
-         setIsLoading(false)                
+    const renderError = () => error ? <div className='alert alert-danger alert-dismissable fade show' role="alert">Unable to load Movies, please try again in a few minutes</div> : null
 
-        return () => 
-        {
-            useRef.current = null;    
-        }
-    }, [fetchURL])
-
-    const renderError = () =>
-    {
-        if (error)
-        {
-            return (
-                <div className='alert alert-danger alert-dismissable fade show' role="alert">Unable to load Movies, please try again in a few minutes</div>
-            )
-        }
-    }
 
     const handleShowMoreDetails = () =>
     {
@@ -76,11 +42,10 @@ function Row({ title, fetchURL, mediaType, selectedRow, setSelectedRow })
                     </p>
                 </span>
                 {currentMovie.trailerKey && <YouTube
-                   className='tralier'
+                   className='trailer'
                     videoId={currentMovie.trailerKey}
                     opts={opts}
-                >
-                </YouTube>}
+                />}
 
                 {/* close button*/}
                 <button onClick={() => setSelectedRow('')}>
@@ -89,10 +54,7 @@ function Row({ title, fetchURL, mediaType, selectedRow, setSelectedRow })
             </span>
         )    
     }
-    const ShowLoading = () =>
-    {
-        return isLoading ? <div>loading</div> : null
-    }
+    const ShowLoading = () => isLoading ? <div>loading</div> : null
 
     const RenderRow = () =>
     {

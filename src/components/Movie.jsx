@@ -36,7 +36,7 @@ const Movie = ({setCurrentMovie, movie, mediaType, handleShowMoreDetails}) =>
     {
         if ('trailerKey' in movie === false)
         {
-            let details = Object.assign(movie, { trailerKey: trailerKey })
+            let details = Object.assign({ trailerKey: trailerKey }, movie)
             setCurrentMovie(details);
         }
         handleShowMoreDetails()
